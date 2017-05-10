@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>exe</OutputType>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <ApplicationIcon />
+    <OutputTypeEx>exe</OutputTypeEx>
+    <StartupObject />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\MicroIOC\MicroIOC\MicroIOC.NetCore\MicroIOC.NetCore.csproj" />
+    <ProjectReference Include="..\PikeMQ.Server\PikeMQ.Server.csproj" />
+    <ProjectReference Include="..\PikeMQ\PikeMQ.Core.csproj" />
+  </ItemGroup>
+
+</Project>

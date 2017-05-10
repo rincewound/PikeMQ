@@ -1,0 +1,9 @@
+language: csharp
+solution: PikeMQ.sln
+install:
+  - nuget restore PikeMQ.sln
+  - sudo apt-get install nunit-console
+script:
+  - xbuild /p:Configuration=Release PikeMQ.sln
+after_script:
+  - nunit-console ./MicroIOC.Test/bin/Release/PikeMQ.Test.dll

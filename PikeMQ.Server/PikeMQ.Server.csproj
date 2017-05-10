@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PikeMQ\PikeMQ.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="MicroIOC.NetCore">
+      <HintPath>..\Lib3\MicroIOC.NetCore.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
