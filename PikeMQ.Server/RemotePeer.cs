@@ -6,7 +6,7 @@ using PikeMQ.Core.StatusCodes;
 
 namespace PikeMQ.Server
 {
-    public class RemotePeer : IPeer
+    public class RemotePeer : PeerBaseImpl
     {
         public enum PeerState
         {
@@ -14,33 +14,14 @@ namespace PikeMQ.Server
             Connected,
             Disconnected
         }
-
-        AsyncSocket socket;
-        FrameExtractor fex = new FrameExtractor();
+              
         public PeerState ConnectionState { get; private set; }
         byte[] clientID = new byte[16];
 
         FrameReceived.FrameReceivedDelegate frameReceive = delegate { };
-        const int MaxReceiveBuffer = 65565;
 
-        byte[] ReceiveBuffer = new byte[MaxReceiveBuffer];
-        int WritePos;
-
-        public RemotePeer(AsyncSocket socket)
+        public RemotePeer(AsyncSocket sock) : base(sock)
         {
-            this.socket = socket;
-        }
-
-        public virtual void Stop()
-        {
-            socket.OnDataReceived -= DataReceivedDelegate;
-            socket.Stop();
-        }
-
-        public virtual void Run()
-        {
-            socket.OnDataReceived += DataReceivedDelegate;
-            socket.StartReceiving();            
         }
 
         public override string ToString()
@@ -48,76 +29,11 @@ namespace PikeMQ.Server
             return "RemotePeer@" + socket.ToString();
         }
 
-        async Task<PostResult> IPeer.PostMessage(string topic, byte[] data, QoS qos)
+        public async override Task<PostResult> PostMessage(string topic, byte[] data, QoS qos)
         {
             return PostResult.Ok;
         }
-
-        public void DataReceivedDelegate(byte[] buffer, int count)
-        {
-            // Socket possible closed...
-            if(count == 0)
-            {
-                Disconnect();
-            }
-
-            if (WritePos + count > MaxReceiveBuffer)
-            {
-                // Overflow!
-            }            
-            Array.Copy(buffer, 0, ReceiveBuffer, WritePos, count);
-            WritePos += count;
-
-            var res = fex.TryExtract(ReceiveBuffer);
-            while (res.success)
-            {
-                if (!res.success)
-                    break;
-
-                // dispatch frame, clear buffer...
-                Array.Copy(ReceiveBuffer, (int)res.firstUnusedByte, ReceiveBuffer, 0, (int)res.firstUnusedByte);
-                Array.Clear(ReceiveBuffer, (int)res.firstUnusedByte, (int) (WritePos - res.firstUnusedByte));
-                WritePos -= (int)res.firstUnusedByte;
-
-                OnFrameReceived(res.frame);
-                res = fex.TryExtract(ReceiveBuffer);
-            }
-
-            // @ToDo Possible failure mode: no stx at the beginning
-            // ==> cannot recover :(
-
-        }
-
-        private void Disconnect()
-        {
-            Frame disconnect = new Frame();
-            disconnect.frameType = FrameType.Disconnect;
-            OnFrameReceived(disconnect);
-        }
-
-        void OnFrameReceived(Frame f)
-        {
-            // CHeck internal state:
-            if(f.frameType == FrameType.Connect)
-            {
-                // Bad State for connectionattempt
-                if (ConnectionState != PeerState.Unknown)
-                {
-                    // Break connection, kill peer. Set fire to his house.
-                    Disconnect();
-                    return;
-                }
-
-                if(ProcessConnectionAttempt(f))
-                    ConnectionState = PeerState.Connected;
-            }
-
-            // Process frame, if we are connected.
-            if(ConnectionState == PeerState.Connected ||
-               f.frameType == FrameType.Disconnect)
-                frameReceive(f, this);
-        }
-
+              
         private bool ProcessConnectionAttempt(Frame f)
         {
             // Read data from frame..
@@ -146,12 +62,35 @@ namespace PikeMQ.Server
             return true;
         }
 
-        public void SetFrameReceiver(FrameReceived.FrameReceivedDelegate frd)
+        public override void SetFrameReceiver(FrameReceived.FrameReceivedDelegate frd)
         {
             frameReceive = frd;
         }
 
-        public virtual void SendSubscribeReply(string channel, SubscribeStatus status)
+        protected override void OnFrameReceived(Frame f)
+        {
+            // CHeck internal state:
+            if (f.frameType == FrameType.Connect)
+            {
+                // Bad State for connectionattempt
+                if (ConnectionState != PeerState.Unknown)
+                {
+                    // Break connection, kill peer. Set fire to his house.
+                    Disconnect();
+                    return;
+                }
+
+                if (ProcessConnectionAttempt(f))
+                    ConnectionState = PeerState.Connected;
+            }
+
+            // Process frame, if we are connected.
+            if (ConnectionState == PeerState.Connected ||
+               f.frameType == FrameType.Disconnect)
+                frameReceive(f, this);
+        }
+
+        public override void SendSubscribeReply(string channel, SubscribeStatus status)
         {
             FrameBuilder theBuilder = new FrameBuilder();
             theBuilder.WriteString(channel);
@@ -160,7 +99,7 @@ namespace PikeMQ.Server
             socket.Send(theBuilder.Build(FrameType.SubReply));
         }
 
-        public virtual void SendConnectionReply(ConnectionAttemptStatus status)
+        public override void SendConnectionReply(ConnectionAttemptStatus status)
         {
             FrameBuilder theBuilder = new FrameBuilder();
             theBuilder.WriteByte((byte)status);
@@ -168,7 +107,7 @@ namespace PikeMQ.Server
             socket.Send(theBuilder.Build(FrameType.ConReply));
         }
 
-        public virtual void SendUnsubReply(string channel)
+        public override void SendUnsubReply(string channel)
         {
             FrameBuilder theBuilder = new FrameBuilder();
             theBuilder.WriteString(channel);

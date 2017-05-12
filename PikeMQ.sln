@@ -1,23 +1,23 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+VisualStudioVersion = 15.0.26430.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PikeMQ.Core", "PikeMQ\PikeMQ.Core.csproj", "{C7D3716E-4545-4923-8F2C-A1D4C9B8CCC9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PikeMQ.Core.Test", "Tests\PikeMQ.Core.Test.csproj", "{5D121E37-3AEE-40F2-92A7-225384BA87CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PikeMQ.Server", "PikeMQ.Server\PikeMQ.Server.csproj", "{E048B9F2-8D50-43AA-B4F5-62277945696A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PikeMQ.Server", "PikeMQ.Server\PikeMQ.Server.csproj", "{E048B9F2-8D50-43AA-B4F5-62277945696A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PikeMQ.Client", "PikeMQ.Client\PikeMQ.Client.csproj", "{4550C4EF-0FB1-44E6-A57C-B77C180BC6EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PikeMQ.Client", "PikeMQ.Client\PikeMQ.Client.csproj", "{4550C4EF-0FB1-44E6-A57C-B77C180BC6EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PikeMQ.Client.Test", "PikeMQ.Client.Test\PikeMQ.Client.Test.csproj", "{9CBE8EC4-55AD-4A41-BB3D-ACD21D8344C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PikeMQ.Client.Test", "PikeMQ.Client.Test\PikeMQ.Client.Test.csproj", "{9CBE8EC4-55AD-4A41-BB3D-ACD21D8344C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PikeMQ.Server.Test", "PikeMQ.Server.Test\PikeMQ.Server.Test.csproj", "{4B56199B-BE48-4A9B-8E4C-10F33BB59D47}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PikeMQ.Server.Test", "PikeMQ.Server.Test\PikeMQ.Server.Test.csproj", "{4B56199B-BE48-4A9B-8E4C-10F33BB59D47}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PikeMQ.Server.App", "PikeMQ.Server.App\PikeMQ.Server.App.csproj", "{E1772E7D-9677-4D53-9140-2522E45432C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PikeMQ.Server.App", "PikeMQ.Server.App\PikeMQ.Server.App.csproj", "{E1772E7D-9677-4D53-9140-2522E45432C8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroIOC.NetCore", "..\MicroIOC\MicroIOC\MicroIOC.NetCore\MicroIOC.NetCore.csproj", "{0A2454E4-519D-49E4-8F8F-3619C04CF40B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroIOC.NetCore", "..\..\..\MicroIOC\MicroIOC\MicroIOC.NetCore\MicroIOC.NetCore.csproj", "{C919BA0E-FCAF-4A9D-A159-167F175880E6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,10 +53,10 @@ Global
 		{E1772E7D-9677-4D53-9140-2522E45432C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E1772E7D-9677-4D53-9140-2522E45432C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E1772E7D-9677-4D53-9140-2522E45432C8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0A2454E4-519D-49E4-8F8F-3619C04CF40B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0A2454E4-519D-49E4-8F8F-3619C04CF40B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0A2454E4-519D-49E4-8F8F-3619C04CF40B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0A2454E4-519D-49E4-8F8F-3619C04CF40B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C919BA0E-FCAF-4A9D-A159-167F175880E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C919BA0E-FCAF-4A9D-A159-167F175880E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C919BA0E-FCAF-4A9D-A159-167F175880E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C919BA0E-FCAF-4A9D-A159-167F175880E6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

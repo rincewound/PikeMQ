@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\MicroIOC\MicroIOC\MicroIOC.NetCore\MicroIOC.NetCore.csproj" />
+    <ProjectReference Include="..\..\..\..\MicroIOC\MicroIOC\MicroIOC.NetCore\MicroIOC.NetCore.csproj" />
     <ProjectReference Include="..\PikeMQ.Server\PikeMQ.Server.csproj" />
     <ProjectReference Include="..\PikeMQ\PikeMQ.Core.csproj" />
   </ItemGroup>
