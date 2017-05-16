@@ -151,5 +151,23 @@ namespace PikeMQ.Core.Test
                                             .payload
                                             .SequenceEqual(new byte[] {0x01, 0x02, 0x03, 0x04 }));
         }
+
+        [Fact]
+        public void CanExtract_FrameBuilderOutput()
+        {
+            FrameBuilder blder = new FrameBuilder();
+
+            blder.WriteByte(0x44);     //Protocol Version 1
+            // empty client id for now
+            blder.WriteArray(new byte[16]);
+            blder.WriteMultiByte(0);    // no secdata
+            blder.WriteMultiByte(0);    // no lastwill channel
+            blder.WriteMultiByte(0);    // no lastwill data
+
+            var theFrame = blder.Build(FrameType.Connect);
+
+            FrameExtractor fex = new FrameExtractor();
+            Assert.True(fex.TryExtract(theFrame).success);
+        }
     }
 }

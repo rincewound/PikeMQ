@@ -6,7 +6,7 @@ using PikeMQ.Core.StatusCodes;
 
 namespace PikeMQ.Server
 {
-    public class RemotePeer : PeerBaseImpl
+    public class RemotePeer : PeerBaseImpl, IPeer
     {
         public enum PeerState
         {
@@ -29,8 +29,18 @@ namespace PikeMQ.Server
             return "RemotePeer@" + socket.ToString();
         }
 
-        public async override Task<PostResult> PostMessage(string topic, byte[] data, QoS qos)
+        public async Task<PostResult> PostMessage(string topic, byte[] data, QoS qos)
         {
+            FrameBuilder bld = new FrameBuilder();
+            bld.WriteByte((byte)QoS.BestEffort);
+            // ToDo: Generate Frame Number to receive ACK.
+            bld.WriteArray(new byte[] { 0x00, 0x00, 0x00, 0x00 });
+            bld.WriteString(topic);
+            bld.WriteMultiByte(data.Length);
+            bld.WriteArray(data);
+
+            socket.Send(bld.Build(FrameType.Publish));
+
             return PostResult.Ok;
         }
               
@@ -45,24 +55,24 @@ namespace PikeMQ.Server
                 return false;
 
             
-            strm.Read(clientID, 0, 16);
-            var secDataLen = Util.ExtractMultiByte(strm);
+            //strm.Read(clientID, 0, 16);
+            //var secDataLen = Util.ExtractMultiByte(strm);
 
-            if (!secDataLen.success)
-                return false;
+            //if (!secDataLen.success)
+            //    return false;
 
-            // Skip security data for now.
-            strm.Seek(secDataLen.value, SeekOrigin.Current);
+            //// Skip security data for now.
+            //strm.Seek(secDataLen.value, SeekOrigin.Current);
 
-            var lastWillChanLen = Util.ExtractMultiByte(strm);
-            strm.Seek(lastWillChanLen.value, SeekOrigin.Current);
-            var lastWillDataLen = Util.ExtractMultiByte(strm);
-            strm.Seek(lastWillChanLen.value, SeekOrigin.Current);
+            //var lastWillChanLen = Util.ExtractMultiByte(strm);
+            //strm.Seek(lastWillChanLen.value, SeekOrigin.Current);
+            //var lastWillDataLen = Util.ExtractMultiByte(strm);
+            //strm.Seek(lastWillChanLen.value, SeekOrigin.Current);
 
             return true;
         }
 
-        public override void SetFrameReceiver(FrameReceived.FrameReceivedDelegate frd)
+        public void SetFrameReceiver(FrameReceived.FrameReceivedDelegate frd)
         {
             frameReceive = frd;
         }
@@ -90,7 +100,7 @@ namespace PikeMQ.Server
                 frameReceive(f, this);
         }
 
-        public override void SendSubscribeReply(string channel, SubscribeStatus status)
+        public virtual void SendSubscribeReply(string channel, SubscribeStatus status)
         {
             FrameBuilder theBuilder = new FrameBuilder();
             theBuilder.WriteString(channel);
@@ -99,7 +109,7 @@ namespace PikeMQ.Server
             socket.Send(theBuilder.Build(FrameType.SubReply));
         }
 
-        public override void SendConnectionReply(ConnectionAttemptStatus status)
+        public virtual void SendConnectionReply(ConnectionAttemptStatus status)
         {
             FrameBuilder theBuilder = new FrameBuilder();
             theBuilder.WriteByte((byte)status);
@@ -107,7 +117,7 @@ namespace PikeMQ.Server
             socket.Send(theBuilder.Build(FrameType.ConReply));
         }
 
-        public override void SendUnsubReply(string channel)
+        public virtual void SendUnsubReply(string channel)
         {
             FrameBuilder theBuilder = new FrameBuilder();
             theBuilder.WriteString(channel);

@@ -137,13 +137,26 @@ namespace PikeMQ.Server.Test
         [Fact]
         public void BufferOverflow_IsRecoverable()
         {
-            Assert.False(true, "Implement");         
+            Assert.False(true, "Implement");
         }
 
         [Fact]
         public void GarbageInBuffer_IsRecoverable()
         {
-            Assert.False(true, "Implement");
+
+            Connect();
+            var data = new byte[] { 0xFF,
+                                    0x24,
+                                    0x02 /*STX*/,
+                                    0x01 /* 1 Byte Payload */,
+                                    0x03 /* Connection attempt */,
+                                    // We have no additional data.
+                                    0x03 /*ETX*/ };
+            p.SetFrameReceiver((x, y) => lastFrame = x);
+            p.DataReceivedDelegate(data, 6);
+
+            Assert.NotNull(lastFrame);
+            Assert.Equal(lastFrame.frameType, FrameType.Publish);
         }
 
         [Fact]
@@ -184,6 +197,25 @@ namespace PikeMQ.Server.Test
 
             A.CallTo(() => socket.Send(A<byte[]>.That.IsSameSequenceAs(expectedFrame))).MustHaveHappened();
             
+        }
+
+        [Fact]
+        public void PostMessage_SendsMessageToPeer()
+        {
+            FrameBuilder bld = new FrameBuilder();
+            bld.WriteByte((byte)QoS.BestEffort);
+            bld.WriteArray(new byte[] { 0x00, 0x00, 0x00, 0x00 });
+            bld.WriteString("Fnord");
+            bld.WriteString("I am a payload");
+
+            var expected = bld.Build(FrameType.Publish);
+
+            var result = p.PostMessage("Fnord", Encoding.UTF8.GetBytes("I am a payload"), QoS.BestEffort);
+            result.Wait();
+
+            A.CallTo(() => socket.Send(A<byte[]>.That.IsSameSequenceAs(expected))).MustHaveHappened();
+
+
         }
     }
 }

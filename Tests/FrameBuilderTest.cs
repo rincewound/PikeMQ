@@ -30,6 +30,15 @@ namespace PikeMQ.Core.Test
         }
 
         [Fact]
+        public void WriteString_WritesLengthAndData()
+        {
+            builder.WriteString("Foo");
+            var data = builder.GetData();
+            var decoded = Util.ExtractMultiByte(data, 0).value;
+            Assert.Equal(3u, decoded);
+        }
+
+        [Fact]
         public void Build_CreatesFrame()
         {
             builder.WriteArray(new byte[] { 0xAA, 0xBB });
@@ -39,7 +48,7 @@ namespace PikeMQ.Core.Test
             var expectedFrame = new byte[]
                                     {
                                         0x02,
-                                        0x02,
+                                        0x03,
                                         0x0E,
                                         0xAA,
                                         0xBB,

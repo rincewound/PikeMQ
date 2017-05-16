@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PikeMQ.Server.App", "PikeMQ
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroIOC.NetCore", "..\..\..\MicroIOC\MicroIOC\MicroIOC.NetCore\MicroIOC.NetCore.csproj", "{C919BA0E-FCAF-4A9D-A159-167F175880E6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PikeMQ.Client.App", "PikeMQ.Client.App\PikeMQ.Client.App.csproj", "{293526FD-B544-46B9-A3C6-C47FFC099712}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{C919BA0E-FCAF-4A9D-A159-167F175880E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C919BA0E-FCAF-4A9D-A159-167F175880E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C919BA0E-FCAF-4A9D-A159-167F175880E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{293526FD-B544-46B9-A3C6-C47FFC099712}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{293526FD-B544-46B9-A3C6-C47FFC099712}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{293526FD-B544-46B9-A3C6-C47FFC099712}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{293526FD-B544-46B9-A3C6-C47FFC099712}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

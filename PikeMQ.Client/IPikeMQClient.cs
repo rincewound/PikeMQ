@@ -44,27 +44,37 @@ namespace PikeMQ.Client
             throw new NotImplementedException();
         }
 
-        public override Task<PostResult> PostMessage(string topic, byte[] data, QoS qos)
+        public Task<PostResult> PostMessage(string topic, byte[] data, QoS qos)
+        {
+            FrameBuilder blder = new FrameBuilder();
+            blder.WriteByte((byte)qos);
+            // Empty packet id for now!
+            blder.WriteArray(new byte[] { 0x00, 0x00, 0x00, 0x00 });
+            blder.WriteString(topic);
+            blder.WriteMultiByte(data.Length);
+            blder.WriteArray(data);
+            var theFrame = blder.Build(FrameType.Publish);
+            socket.Send(theFrame);
+            return new Task<PostResult>(() => PostResult.Ok);
+        }
+
+        public void SetFrameReceiver(FrameReceived.FrameReceivedDelegate frd)
         {
             throw new NotImplementedException();
         }
 
-        public override void SetFrameReceiver(FrameReceived.FrameReceivedDelegate frd)
+        public void SendSubscribeRequest(string channel)
         {
-            throw new NotImplementedException();
+            FrameBuilder blder = new FrameBuilder();
+            blder.WriteString(channel);
+            socket.Send(blder.Build(FrameType.Subscribe));
         }
 
-        public override void SendSubscribeReply(string channel, SubscribeStatus status)
+        public void SendUnsubscribeRequest(string channel)
         {
-            throw new NotImplementedException();
         }
 
-        public override void SendConnectionReply(ConnectionAttemptStatus status)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void SendUnsubReply(string channel)
+        public void SendUnsubReply(string channel)
         {
             throw new NotImplementedException();
         }

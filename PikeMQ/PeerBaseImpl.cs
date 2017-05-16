@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using PikeMQ.Core.StatusCodes;
+using System.Linq;
 
 namespace PikeMQ.Core
 {
-    public abstract class PeerBaseImpl: IPeer
+    public abstract class PeerBaseImpl
     {
         const int MaxReceiveBuffer = 65565;        
         byte[] ReceiveBuffer = new byte[MaxReceiveBuffer];
@@ -39,6 +40,7 @@ namespace PikeMQ.Core
             if (count == 0)
             {
                 Disconnect();
+                return;
             }
 
             if (WritePos + count > MaxReceiveBuffer)
@@ -48,11 +50,18 @@ namespace PikeMQ.Core
             Array.Copy(buffer, 0, ReceiveBuffer, WritePos, count);
             WritePos += count;
 
+            // Not an stx at the beginning--> search it an kill off any 
+            // preceding data
+            if (ReceiveBuffer[0] != 0x02)
+                ReceiveBuffer = ReceiveBuffer.SkipWhile(x => x != 0x02).ToArray();
+
             var res = fex.TryExtract(ReceiveBuffer);
             while (res.success)
             {
                 if (!res.success)
+                {
                     break;
+                }
 
                 // dispatch frame, clear buffer...
                 Array.Copy(ReceiveBuffer, (int)res.firstUnusedByte, ReceiveBuffer, 0, (int)res.firstUnusedByte);
@@ -75,16 +84,5 @@ namespace PikeMQ.Core
         }
 
         protected abstract void OnFrameReceived(Frame f);
-
-        public abstract Task<PostResult> PostMessage(string topic, byte[] data, QoS qos);
-
-        public abstract void SetFrameReceiver(FrameReceived.FrameReceivedDelegate frd);
-
-        public abstract void SendSubscribeReply(string channel, SubscribeStatus status);
-
-        public abstract void SendConnectionReply(ConnectionAttemptStatus status);
-
-        public abstract void SendUnsubReply(string channel);
-
     }
 }

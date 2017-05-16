@@ -72,7 +72,7 @@ namespace PikeMQ.Core
             var payload = GetData();
             List<byte> data = new List<byte>();
             data.Add(0x02);
-            data.AddRange(ConvertToMultiByte(payload.Length));
+            data.AddRange(ConvertToMultiByte(payload.Length + 1));  // + 1 for frametype!
             data.Add((byte)frameType);
             data.AddRange(GetData());
             data.Add(0x03);
