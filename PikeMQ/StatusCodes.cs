@@ -24,4 +24,9 @@ namespace PikeMQ.Core.StatusCodes
         FailedNotAuthorized,
         GeneralError = 0xFF
     }
+
+    public enum ChannelEventResult
+    {
+        Ok = 0x00
+    }
 }

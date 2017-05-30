@@ -9,10 +9,11 @@ namespace PikeMQ.Client
     public class PikeMQClient: PeerBaseImpl
     {
         public delegate void OnEvent();
+        public delegate void MessageReceived(string channel, byte[] data);
 
         public event OnEvent OnConnect;
         public event OnEvent OnDisconnect;
-        public event OnEvent OnMessageReceived;        
+        public event MessageReceived OnMessageReceived = delegate { };        
 
         public PikeMQClient(AsyncSocket socket): base(socket)
         {
@@ -41,7 +42,28 @@ namespace PikeMQ.Client
 
         protected override void OnFrameReceived(Frame f)
         {
-            throw new NotImplementedException();
+            if (f.frameType == FrameType.ChannelEvent)
+                DispatchChannelEvent(f);
+        }
+
+        private void DispatchChannelEvent(Frame f)
+        {
+            var flagByte = f.payload[0];
+            var messageId = new byte[4];
+            Array.Copy(f.payload, 1, messageId, 0, 4);
+            // var clientId = ...
+            var channel = Util.ExtractByteArray(f.payload, 5);
+            var payload = Util.ExtractByteArray(f.payload, 5 + channel.numBytesUsed);
+
+            OnMessageReceived(System.Text.Encoding.UTF8.GetString(channel.data), payload.data);
+
+            if((flagByte & 0x01) != 0x00)
+            {
+                FrameBuilder builder = new FrameBuilder();
+                builder.WriteArray(messageId);
+                builder.WriteByte((byte)ChannelEventResult.Ok);
+                socket.Send(builder.Build(FrameType.EventAck));
+            }
         }
 
         public Task<PostResult> PostMessage(string topic, byte[] data, QoS qos)
@@ -58,11 +80,13 @@ namespace PikeMQ.Client
             return new Task<PostResult>(() => PostResult.Ok);
         }
 
+        // Rubbish -> Client should not need to worry about frames.
         public void SetFrameReceiver(FrameReceived.FrameReceivedDelegate frd)
         {
             throw new NotImplementedException();
         }
 
+        // No need for these to be public!
         public void SendSubscribeRequest(string channel)
         {
             FrameBuilder blder = new FrameBuilder();

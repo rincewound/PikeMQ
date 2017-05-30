@@ -6,6 +6,18 @@ namespace PikeMQ.Core
 {
     public static class Util
     {
+        public static (bool success, byte[] data, int numBytesUsed) ExtractByteArray(byte[] source, int startIndex)
+        {
+            var len = ExtractMultiByte(source, startIndex);
+
+            if (!len.success)
+                return (false, null, 0);
+
+            var buff = new byte[len.value];
+            Array.Copy(source, startIndex + len.numBytesUsed, buff, 0, (int) len.value);
+            return (true, buff,  len.numBytesUsed + (int)len.value);
+        }
+
         /*
          * This method extracts a multi-byte encoded integer from a given array.
          * For each byte inspected, the upper bit determines, if another byte is 

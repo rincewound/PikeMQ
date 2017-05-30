@@ -10,7 +10,7 @@ namespace PikeMQ.Core
     public interface IPeer
     {         
         Task<PostResult> PostMessage(string topic, byte[] data, QoS qos);
-        void SetFrameReceiver(FrameReceivedDelegate frd);
+        void SetFrameReceivedCb(FrameReceivedDelegate frd);
 
         //void Ping();
         //void Disconnect();

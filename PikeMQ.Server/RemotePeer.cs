@@ -39,7 +39,7 @@ namespace PikeMQ.Server
             bld.WriteMultiByte(data.Length);
             bld.WriteArray(data);
 
-            socket.Send(bld.Build(FrameType.Publish));
+            socket.Send(bld.Build(FrameType.ChannelEvent));
 
             return PostResult.Ok;
         }
@@ -72,7 +72,7 @@ namespace PikeMQ.Server
             return true;
         }
 
-        public void SetFrameReceiver(FrameReceived.FrameReceivedDelegate frd)
+        public void SetFrameReceivedCb(FrameReceived.FrameReceivedDelegate frd)
         {
             frameReceive = frd;
         }

@@ -25,7 +25,7 @@ namespace PikeMQ.Core
             return PostResult.Ok;
         }
 
-        public void SetFrameReceiver(FrameReceived.FrameReceivedDelegate frd)
+        public void SetFrameReceivedCb(FrameReceived.FrameReceivedDelegate frd)
         {
             //throw new NotImplementedException();
         }

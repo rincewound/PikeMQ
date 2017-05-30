@@ -36,7 +36,7 @@ namespace PikeMQ.Core
 
         public void DataReceivedDelegate(byte[] buffer, int count)
         {
-            // Socket possible closed...
+            // Socket possibly closed...
             if (count == 0)
             {
                 Disconnect();

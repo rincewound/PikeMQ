@@ -13,7 +13,7 @@ namespace PikeMQ.Server
         public virtual void RegisterPeer(IPeer thePeer)
         {
             peers.Add(thePeer);
-            thePeer.SetFrameReceiver(FrameReceived);
+            thePeer.SetFrameReceivedCb(FrameReceived);
         }
 
         public virtual void UnregisterPeer(IPeer thePeer)

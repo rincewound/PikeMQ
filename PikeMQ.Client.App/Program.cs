@@ -15,7 +15,7 @@ namespace PikeMQ.Client.App
             theClient.Connect();
 
             theClient.SendSubscribeRequest("SomeChannel");
-             theClient.PostMessage("AnotherChannel", new byte[] { 0x01, 0x02 }, Core.QoS.BestEffort);
+            theClient.PostMessage("AnotherChannel", new byte[] { 0x01, 0x02 }, Core.QoS.BestEffort);
 
             Console.WriteLine("Press key to stop");
 

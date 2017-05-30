@@ -89,7 +89,7 @@ namespace PikeMQ.Server.Test
                                     0x03 /* Publish attempt */,
                                     // We have no additional data.
                                     0x03 /*ETX*/ };
-            p.SetFrameReceiver((x, y) => lastFrame = x);
+            p.SetFrameReceivedCb((x, y) => lastFrame = x);
             p.DataReceivedDelegate(data, 4);
 
             Assert.Null(lastFrame);           
@@ -104,7 +104,7 @@ namespace PikeMQ.Server.Test
                                     0x03 /* Connection attempt */,
                                     // We have no additional data.
                                     0x03 /*ETX*/ };
-            p.SetFrameReceiver((x,y)  => lastFrame = x);
+            p.SetFrameReceivedCb((x,y)  => lastFrame = x);
             p.DataReceivedDelegate(data, 4);
 
             Assert.NotNull(lastFrame);
@@ -127,7 +127,7 @@ namespace PikeMQ.Server.Test
                                     // We have no additional data.
                                     0x03 /*ETX*/
                                   };
-            p.SetFrameReceiver((x, y) => lastFrame = x);
+            p.SetFrameReceivedCb((x, y) => lastFrame = x);
             p.DataReceivedDelegate(data, 8);
 
             Assert.NotNull(lastFrame);
@@ -152,7 +152,7 @@ namespace PikeMQ.Server.Test
                                     0x03 /* Connection attempt */,
                                     // We have no additional data.
                                     0x03 /*ETX*/ };
-            p.SetFrameReceiver((x, y) => lastFrame = x);
+            p.SetFrameReceivedCb((x, y) => lastFrame = x);
             p.DataReceivedDelegate(data, 6);
 
             Assert.NotNull(lastFrame);
@@ -208,7 +208,7 @@ namespace PikeMQ.Server.Test
             bld.WriteString("Fnord");
             bld.WriteString("I am a payload");
 
-            var expected = bld.Build(FrameType.Publish);
+            var expected = bld.Build(FrameType.ChannelEvent);
 
             var result = p.PostMessage("Fnord", Encoding.UTF8.GetBytes("I am a payload"), QoS.BestEffort);
             result.Wait();
