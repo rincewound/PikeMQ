@@ -38,7 +38,7 @@ namespace PikeMQ.Server
             bld.WriteString(topic);
             bld.WriteMultiByte(data.Length);
             bld.WriteArray(data);
-
+        
             socket.Send(bld.Build(FrameType.ChannelEvent));
 
             return PostResult.Ok;

@@ -16,7 +16,11 @@ namespace PikeMQ.Server.App
         {
             Console.WriteLine("A message was posted in: " + topic);
             Console.WriteLine(Encoding.UTF8.GetString(data));
-            return base.DispatchMessage(topic, data, qos);
+            var res =  base.DispatchMessage(topic, data, qos);
+
+            base.DispatchMessage("SomeChannel", Encoding.UTF8.GetBytes("This is yet another message."), QoS.BestEffort);
+
+            return res;
         }
     }
 

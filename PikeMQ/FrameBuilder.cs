@@ -46,7 +46,6 @@ namespace PikeMQ.Core
         {
             var tmp = val;
             List<byte> bytes = new List<byte>();
-            var carry = 0;
             while (tmp > 0)
             {
                 byte current = (byte)(tmp & 0x7F);

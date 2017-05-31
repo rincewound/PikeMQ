@@ -9,10 +9,8 @@ namespace PikeMQ.Core
     {
         Socket sock;
         bool terminate = false;
-        byte[] receiveBuffer = new byte[255];
 
         public delegate void DataReceivedDelegate(byte[] buffer, int count);
-
         public event DataReceivedDelegate OnDataReceived = delegate { };
 
         public AsyncSocket(Socket s)
@@ -29,11 +27,28 @@ namespace PikeMQ.Core
         {
             var evt = new SocketAsyncEventArgs();
             evt.Completed += this.ReceiveComplete;
-            evt.SetBuffer(receiveBuffer, 0, 255);
-            if (sock.ReceiveAsync(evt))
+            evt.SetBuffer(new byte[32], 0, 32);
+            if (!sock.ReceiveAsync(evt))
+            {
+                System.Console.WriteLine("Data received.");
+                OnDataReceived(evt.Buffer, evt.BytesTransferred);
+
+                if (evt.BytesTransferred == 0)
+                {
+                    System.Console.WriteLine("Peer closed connection.");
+                    terminate = true;
+                }
+                
+                if (!terminate)
+                {
+                    StartReceiving();
+                }
                 return;
-            
-            ReceiveComplete(this, evt);            
+            }
+            else
+            {
+                OnDataReceived(evt.Buffer, evt.BytesTransferred);
+            }            
         }
 
         public void Stop()
@@ -44,13 +59,23 @@ namespace PikeMQ.Core
 
         public virtual void Send(byte[] data)
         {
+            System.Console.WriteLine("Sent data to " + sock.ToString());
+            System.Console.WriteLine(BitConverter.ToString(data));
             // ToDo: Async!
             sock.Send(data);
         }
 
         private void ReceiveComplete(object sender, SocketAsyncEventArgs e)
         {
+            System.Console.WriteLine("Data received.");
             OnDataReceived(e.Buffer, e.BytesTransferred);
+
+            if (e.BytesTransferred == 0)
+            {
+                System.Console.WriteLine("Peer closed connection.");
+                terminate = true;
+            }
+
             if(!terminate)
             {
                 StartReceiving();

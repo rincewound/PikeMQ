@@ -16,7 +16,7 @@ namespace PikeMQ.Core.Test
                                     // We have no additional data.
                                     0x03 /*ETX*/ };
 
-            Assert.True(fex.TryExtract(data).success);
+            Assert.True(fex.TryExtract(data, 4).success == FrameExtractor.ResultState.Ok);
 
         }
 
@@ -31,7 +31,7 @@ namespace PikeMQ.Core.Test
                                     // We have no additional data.
                                     };
 
-            Assert.False(fex.TryExtract(data).success);
+            Assert.False(fex.TryExtract(data, 3).success == FrameExtractor.ResultState.MalformedPacket);
         }
 
         [Fact]
@@ -45,7 +45,7 @@ namespace PikeMQ.Core.Test
                                     // We have no additional data.
                                     0x03 /*ETX*/ };
 
-            Assert.False(fex.TryExtract(data).success);
+            Assert.True(fex.TryExtract(data, 4).success == FrameExtractor.ResultState.MissingData);
         }
 
         [Fact]
@@ -58,7 +58,7 @@ namespace PikeMQ.Core.Test
                                     // We have no additional data.
                                     0x03 /*ETX*/ };
 
-            Assert.False(fex.TryExtract(data).success);
+            Assert.True(fex.TryExtract(data, 3).success == FrameExtractor.ResultState.MalformedPacket);
         }
 
         [Fact]
@@ -80,7 +80,7 @@ namespace PikeMQ.Core.Test
                                     0x01, 0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01, // 128
                                     0x03 /*ETX*/ };
 
-            Assert.True(fex.TryExtract(data).success);            
+            Assert.True(fex.TryExtract(data, data.Length).success == FrameExtractor.ResultState.Ok);            
         }
 
         [Fact]
@@ -102,7 +102,7 @@ namespace PikeMQ.Core.Test
                                     0x01, 0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01, // 128
                                     0x03 /*ETX*/ };
 
-            Assert.Equal(fex.TryExtract(data).frame.payload.Length, 128);
+            Assert.Equal(fex.TryExtract(data, data.Length).frame.payload.Length, 128);
         }
 
         [Fact]
@@ -117,7 +117,7 @@ namespace PikeMQ.Core.Test
                                     // We have no additional data.
                                     0x03 /*ETX*/ };
 
-            Assert.False(fex.TryExtract(data).success);
+            Assert.True(fex.TryExtract(data,5).success == FrameExtractor.ResultState.MissingData );
         }
 
         [Fact]
@@ -132,7 +132,7 @@ namespace PikeMQ.Core.Test
                                     // We have no additional data.
                                     0x03 /*ETX*/ };
 
-            Assert.Equal(fex.TryExtract(data).frame.frameType, FrameType.Connect);
+            Assert.Equal(fex.TryExtract(data, 4).frame.frameType, FrameType.Connect);
         }
 
         [Fact]
@@ -147,7 +147,7 @@ namespace PikeMQ.Core.Test
                                     0x01,0x02, 0x03, 0x04,
                                     0x03 /*ETX*/ };
 
-            Assert.True(fex.TryExtract(data).frame
+            Assert.True(fex.TryExtract(data, 8).frame
                                             .payload
                                             .SequenceEqual(new byte[] {0x01, 0x02, 0x03, 0x04 }));
         }
@@ -167,7 +167,8 @@ namespace PikeMQ.Core.Test
             var theFrame = blder.Build(FrameType.Connect);
 
             FrameExtractor fex = new FrameExtractor();
-            Assert.True(fex.TryExtract(theFrame).success);
+            Assert.True(fex.TryExtract(theFrame,23).success == FrameExtractor.ResultState.Ok);
         }
+
     }
 }
