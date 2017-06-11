@@ -74,5 +74,11 @@ namespace PikeMQ.Server.Test
             Assert.True(fnordReceived);
             Assert.True(messageReceived);
         }
+
+        [Fact]
+        public void DispatchMessage_QoSGuaranteedDispatch_SendsReply()
+        {
+            Assert.False(true, "Implement");
+        }
     }
 }

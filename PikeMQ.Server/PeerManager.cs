@@ -24,17 +24,15 @@ namespace PikeMQ.Server
 
         public virtual void FrameReceived(Frame frame, IPeer source)
         {
-            var rp = source as RemotePeer;
-            if (rp == null)
-                return;
-
             switch (frame.frameType)
             {
                 case FrameType.Connect:
                     break;
                 case FrameType.Disconnect:
-                    rp.Stop();
-                    UnregisterPeer(rp);
+                    var rp = source as RemotePeer;
+                    if (rp != null)
+                        rp.Stop();
+                    UnregisterPeer(source);
                     break;
                 case FrameType.Ping:
                     break;

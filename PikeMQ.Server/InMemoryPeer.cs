@@ -57,7 +57,7 @@ namespace PikeMQ.Core
 
         public void SendPublishReply(uint messageId)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
     }
 }

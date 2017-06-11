@@ -16,7 +16,7 @@ namespace PikeMQ.Server.Test
 
         public PeerManagerTest()
         {
-            rpFake = A.Fake<RemotePeer>();
+            rpFake = A.Fake<IPeer>();
             subManFake = A.Fake<ISubscriptionManager>();
             MicroIOC.IOC.Reset();
             MicroIOC.IOC.Register<ISubscriptionManager>(() => subManFake);
@@ -49,6 +49,24 @@ namespace PikeMQ.Server.Test
             frm.frameType = FrameType.Publish;
             peerMan.FrameReceived(frm, rpFake);
             A.CallTo(() => subManFake.DispatchMessage("Test", A<byte[]>.That.IsSameSequenceAs(new byte[] {0xAA, 0xBB, 0xCC }), A<QoS>.Ignored)).MustHaveHappened();
+        }
+
+        [Fact]
+        public void PublishFrame_Qos_GuaranteedDispatch_SendsReply()
+        {
+            FrameBuilder fb = new FrameBuilder();
+            fb.WriteByte((byte)QoS.GuaranteedDispatch);
+            fb.WriteArray(BitConverter.GetBytes((UInt32) 123456));
+            fb.WriteString("Test");
+            fb.WriteMultiByte(3);
+            fb.WriteArray(new byte[] { 0xAA, 0xBB, 0xCC });
+            var data = fb.GetData();
+            var frm = new Frame();
+            frm.payload = data;
+            frm.frameType = FrameType.Publish;
+            peerMan.FrameReceived(frm, rpFake);
+            //A.CallTo(() => subManFake.DispatchMessage("Test", A<byte[]>.That.IsSameSequenceAs(new byte[] { 0xAA, 0xBB, 0xCC }), A<QoS>.Ignored)).MustHaveHappened();
+            A.CallTo(() => rpFake.SendPublishReply(12345)).MustHaveHappened();
         }
 
         [Fact]
