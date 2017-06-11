@@ -80,12 +80,6 @@ namespace PikeMQ.Client
             return new Task<PostResult>(() => PostResult.Ok);
         }
 
-        // Rubbish -> Client should not need to worry about frames.
-        public void SetFrameReceiver(FrameReceived.FrameReceivedDelegate frd)
-        {
-            throw new NotImplementedException();
-        }
-
         // No need for these to be public!
         public void SendSubscribeRequest(string channel)
         {
