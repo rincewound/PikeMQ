@@ -64,9 +64,8 @@ namespace PikeMQ.Server.Test
             var frm = new Frame();
             frm.payload = data;
             frm.frameType = FrameType.Publish;
-            peerMan.FrameReceived(frm, rpFake);
-            //A.CallTo(() => subManFake.DispatchMessage("Test", A<byte[]>.That.IsSameSequenceAs(new byte[] { 0xAA, 0xBB, 0xCC }), A<QoS>.Ignored)).MustHaveHappened();
-            A.CallTo(() => rpFake.SendPublishReply(12345)).MustHaveHappened();
+            peerMan.FrameReceived(frm, rpFake);            
+            A.CallTo(() => rpFake.SendPublishReply(123456)).MustHaveHappened();
         }
 
         [Fact]

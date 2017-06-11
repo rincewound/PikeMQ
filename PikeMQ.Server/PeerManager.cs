@@ -53,6 +53,8 @@ namespace PikeMQ.Server
         private void HandlePublish(Frame frame, IPeer source)
         {
             // the 5 offset is added because we dont process QoS and Framenumber yet.
+            var qos = (QoS)frame.payload[0];
+            var msgId = BitConverter.ToUInt32(frame.payload, 1);
 
             var len = Util.ExtractMultiByte(frame.payload, 5);
 
@@ -67,8 +69,8 @@ namespace PikeMQ.Server
             Array.Copy(frame.payload, (int)(payloadLenOffset + payloadLen.numBytesUsed), payloadBuff, 0, (int) payloadLen.value);
             var res = subMan.DispatchMessage(channelName, payloadBuff, QoS.BestEffort);
             
-            //if(qos > Qos.BestEffort)
-                //source.SendPublishReply(res);
+            if(qos > QoS.BestEffort)
+                source.SendPublishReply(msgId);
         }
 
         private void HandleSubscription(Frame frame, IPeer source)
