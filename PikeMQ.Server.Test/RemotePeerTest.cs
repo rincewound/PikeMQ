@@ -214,8 +214,17 @@ namespace PikeMQ.Server.Test
             result.Wait();
 
             A.CallTo(() => socket.Send(A<byte[]>.That.IsSameSequenceAs(expected))).MustHaveHappened();
+        }
 
+        [Fact]
+        public void SendPublishReply_SendsMessageToPeer()
+        {
+            FrameBuilder bld = new FrameBuilder();
+            bld.WriteArray(BitConverter.GetBytes((UInt32) 112233));       
+            var expected = bld.Build(FrameType.PubReply);
 
+            p.SendPublishReply(112233);
+            A.CallTo(() => socket.Send(A<byte[]>.That.IsSameSequenceAs(expected))).MustHaveHappened();
         }
     }
 }

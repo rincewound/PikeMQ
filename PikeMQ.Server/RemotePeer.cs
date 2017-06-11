@@ -124,5 +124,12 @@ namespace PikeMQ.Server
 
             socket.Send(theBuilder.Build(FrameType.UnsubReply));
         }
+
+        public void SendPublishReply(UInt32 messageId)
+        {
+            FrameBuilder bld = new FrameBuilder();
+            bld.WriteArray(BitConverter.GetBytes(messageId));
+            socket.Send(bld.Build(FrameType.PubReply));
+        }
     }
 }

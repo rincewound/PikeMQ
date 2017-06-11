@@ -6,4 +6,6 @@ install:
 script:
   - xbuild /p:Configuration=Release PikeMQ.sln
 after_script:
-  - nunit-console ./MicroIOC.Test/bin/Release/PikeMQ.Test.dll
+  - nunit-console ./PikeMQ.Server.Test/bin/Release/netcoreapp1.1/PikeMQ.Server.Test.dll
+  - nunit-console ./Tests/bin/Release/netcoreapp1.1/PikeMQ.Core.Test.dll
+  - nunit-console ./PikeMQ.Client.Test/bin/Release/netcoreapp1.1/PikeMQ.Client.Test.dll
