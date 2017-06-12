@@ -77,7 +77,7 @@ namespace PikeMQ.Client
             blder.WriteArray(data);
             var theFrame = blder.Build(FrameType.Publish);
             socket.Send(theFrame);
-            return new Task<PostResult>(() => PostResult.Ok);
+            return new Task<PostResult>(() => PostResult.Dispatched);
         }
 
         // No need for these to be public!

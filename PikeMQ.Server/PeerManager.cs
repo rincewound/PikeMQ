@@ -67,10 +67,25 @@ namespace PikeMQ.Server
 
             var payloadBuff = new byte[payloadLen.value];
             Array.Copy(frame.payload, (int)(payloadLenOffset + payloadLen.numBytesUsed), payloadBuff, 0, (int) payloadLen.value);
-            var res = subMan.DispatchMessage(channelName, payloadBuff, QoS.BestEffort);
+            var res = subMan.DispatchMessage(channelName, payloadBuff, qos);
             
-            if(qos > QoS.BestEffort)
-                source.SendPublishReply(msgId);
+            switch(qos)
+            {
+                case QoS.BestEffort:
+                    // No answer in BestEffort case, we favor throughput here.
+                    break;
+                case QoS.GuaranteedDelivery:
+                    // If GuaranteedDelivery was requested, we send a failure notice if we did not
+                    // get a positive answer
+                    source.SendPublishReply(msgId, res == PostResult.Delivered ? Core.StatusCodes.PublishStatus.AckDelivery
+                                                                               : Core.StatusCodes.PublishStatus.NakDelivery);
+
+                    break;
+                case QoS.GuaranteedDispatch:
+                    source.SendPublishReply(msgId, res >= PostResult.DeliveryError ? Core.StatusCodes.PublishStatus.Ack
+                                                                                   : Core.StatusCodes.PublishStatus.NakDispatch);
+                    break;
+            }
         }
 
         private void HandleSubscription(Frame frame, IPeer source)

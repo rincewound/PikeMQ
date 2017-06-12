@@ -41,7 +41,7 @@ namespace PikeMQ.Server
         
             socket.Send(bld.Build(FrameType.ChannelEvent));
 
-            return PostResult.Ok;
+            return PostResult.Dispatched;
         }
               
         private bool ProcessConnectionAttempt(Frame f)
@@ -125,10 +125,11 @@ namespace PikeMQ.Server
             socket.Send(theBuilder.Build(FrameType.UnsubReply));
         }
 
-        public void SendPublishReply(UInt32 messageId)
+        public void SendPublishReply(UInt32 messageId, PublishStatus status)
         {
             FrameBuilder bld = new FrameBuilder();
             bld.WriteArray(BitConverter.GetBytes(messageId));
+            bld.WriteByte((byte)status);
             socket.Send(bld.Build(FrameType.PubReply));
         }
     }

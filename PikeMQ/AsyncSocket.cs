@@ -63,6 +63,7 @@ namespace PikeMQ.Core
             System.Console.WriteLine(BitConverter.ToString(data));
             // ToDo: Async!
             sock.Send(data);
+            
         }
 
         private void ReceiveComplete(object sender, SocketAsyncEventArgs e)

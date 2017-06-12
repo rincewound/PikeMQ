@@ -220,10 +220,11 @@ namespace PikeMQ.Server.Test
         public void SendPublishReply_SendsMessageToPeer()
         {
             FrameBuilder bld = new FrameBuilder();
-            bld.WriteArray(BitConverter.GetBytes((UInt32) 112233));       
+            bld.WriteArray(BitConverter.GetBytes((UInt32) 112233));
+            bld.WriteByte((byte)PublishStatus.Ack);
             var expected = bld.Build(FrameType.PubReply);
 
-            p.SendPublishReply(112233);
+            p.SendPublishReply(112233, PublishStatus.Ack);
             A.CallTo(() => socket.Send(A<byte[]>.That.IsSameSequenceAs(expected))).MustHaveHappened();
         }
     }

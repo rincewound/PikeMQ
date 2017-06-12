@@ -64,8 +64,26 @@ namespace PikeMQ.Server.Test
             var frm = new Frame();
             frm.payload = data;
             frm.frameType = FrameType.Publish;
+            A.CallTo(() => subManFake.DispatchMessage(A<string>.Ignored, A<byte[]>.Ignored, A<QoS>.Ignored)).Returns(PostResult.Dispatched);
             peerMan.FrameReceived(frm, rpFake);            
-            A.CallTo(() => rpFake.SendPublishReply(123456)).MustHaveHappened();
+            A.CallTo(() => rpFake.SendPublishReply(123456, Core.StatusCodes.PublishStatus.Ack)).MustHaveHappened();
+        }
+
+        [Fact]
+        public void PublishFrame_Qos_GuaranteedDelivery_SendsFailureNotice_IfNooneIsListening()
+        {
+            FrameBuilder fb = new FrameBuilder();
+            fb.WriteByte((byte)QoS.GuaranteedDelivery);
+            fb.WriteArray(BitConverter.GetBytes((UInt32)234567));
+            fb.WriteString("Test");
+            fb.WriteMultiByte(3);
+            fb.WriteArray(new byte[] { 0xAA, 0xBB, 0xCC });
+            var data = fb.GetData();
+            var frm = new Frame();
+            frm.payload = data;
+            frm.frameType = FrameType.Publish;
+            peerMan.FrameReceived(frm, rpFake);
+            A.CallTo(() => rpFake.SendPublishReply(234567, Core.StatusCodes.PublishStatus.NakDelivery)).MustHaveHappened();
         }
 
         [Fact]

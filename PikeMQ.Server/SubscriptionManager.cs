@@ -47,15 +47,15 @@ namespace PikeMQ.Server
             var tsk = Task.WhenAll(subscribers.Select(x => x.thePeer.PostMessage(topic, data, qos)));
 
             if (qos != QoS.GuaranteedDelivery)
-                return PostResult.Ok;
+                return PostResult.Dispatched;
 
             // We have guaranteed delivery, so we have to wait and see if at least
             // one task finishes with a good result.
             tsk.Wait();
 
-            var good = tsk.Result.Any(x => x == PostResult.Ok);
+            var good = tsk.Result.Any(x => x == PostResult.Dispatched);
 
-            return good ? PostResult.Ok
+            return good ? PostResult.Dispatched
                         : PostResult.DeliveryError;            
         }
 
