@@ -45,9 +45,18 @@ namespace PikeMQ.Server
                 case FrameType.Unsub:
                     HandleUnsub(frame, source);
                     break;
+                case FrameType.EventAck:
+                    HandleEventAck(frame, source);
+                    break;
                 default:
                     break;
             }
+        }
+
+        private void HandleEventAck(Frame frame, IPeer source)
+        {
+            var msgId = BitConverter.ToUInt32(frame.payload, 0);
+            throw new Exception("Implement and test me!");
         }
 
         private void HandlePublish(Frame frame, IPeer source)

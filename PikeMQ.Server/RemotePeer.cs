@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using PikeMQ.Core.StatusCodes;
+using System.Threading;
 
 namespace PikeMQ.Server
 {
@@ -14,9 +15,14 @@ namespace PikeMQ.Server
             Connected,
             Disconnected
         }
+
+        Mutex syncSendInProcess = new Mutex();
+        AutoResetEvent waitQosEvent = new AutoResetEvent(false);
               
         public PeerState ConnectionState { get; private set; }
         byte[] clientID = new byte[16];
+        int currentPacketId = 0;
+        int waitForPacketId = 0;
 
         FrameReceived.FrameReceivedDelegate frameReceive = delegate { };
 
@@ -32,14 +38,32 @@ namespace PikeMQ.Server
         public async Task<PostResult> PostMessage(string topic, byte[] data, QoS qos)
         {
             FrameBuilder bld = new FrameBuilder();
-            bld.WriteByte((byte)QoS.BestEffort);
+            bld.WriteByte((byte) (qos == QoS.BestEffort ? 0x00 : 0x01));
             // ToDo: Generate Frame Number to receive ACK.
-            bld.WriteArray(new byte[] { 0x00, 0x00, 0x00, 0x00 });
+            currentPacketId++;
+            bld.WriteArray(BitConverter.GetBytes(currentPacketId));
             bld.WriteString(topic);
             bld.WriteMultiByte(data.Length);
             bld.WriteArray(data);
+
+            if (qos == QoS.GuaranteedDelivery)
+            {
+                if (!syncSendInProcess.WaitOne(3000))
+                    return PostResult.DispatchError;
+                waitForPacketId = currentPacketId;
+            }
         
             socket.Send(bld.Build(FrameType.ChannelEvent));
+
+            if (qos == QoS.GuaranteedDelivery)
+            {
+                var fail = waitQosEvent.WaitOne(3000);
+
+                syncSendInProcess.ReleaseMutex();
+                return fail ? PostResult.DeliveryError
+                            : PostResult.Delivered;
+
+            }
 
             return PostResult.Dispatched;
         }

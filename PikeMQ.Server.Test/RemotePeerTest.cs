@@ -203,7 +203,7 @@ namespace PikeMQ.Server.Test
         public void PostMessage_SendsMessageToPeer()
         {
             FrameBuilder bld = new FrameBuilder();
-            bld.WriteByte((byte)QoS.BestEffort);
+            bld.WriteByte(0x00);    // No Flags!
             bld.WriteArray(new byte[] { 0x00, 0x00, 0x00, 0x00 });
             bld.WriteString("Fnord");
             bld.WriteString("I am a payload");
@@ -225,6 +225,23 @@ namespace PikeMQ.Server.Test
             var expected = bld.Build(FrameType.PubReply);
 
             p.SendPublishReply(112233, PublishStatus.Ack);
+            A.CallTo(() => socket.Send(A<byte[]>.That.IsSameSequenceAs(expected))).MustHaveHappened();
+        }
+
+        [Fact]
+        public void PostMessage_QosGuaranteedDelivery_SetsReplyRequestBit()
+        {
+            FrameBuilder bld = new FrameBuilder();
+            bld.WriteByte(0x01);    // Reply Flag
+            bld.WriteArray(new byte[] { 0x00, 0x00, 0x00, 0x00 });
+            bld.WriteString("Fnord");
+            bld.WriteString("I am a payload");
+
+            var expected = bld.Build(FrameType.ChannelEvent);
+
+            var result = p.PostMessage("Fnord", Encoding.UTF8.GetBytes("I am a payload"), QoS.GuaranteedDelivery);
+            result.Wait();
+
             A.CallTo(() => socket.Send(A<byte[]>.That.IsSameSequenceAs(expected))).MustHaveHappened();
         }
     }

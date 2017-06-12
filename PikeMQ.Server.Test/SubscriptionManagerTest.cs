@@ -1,3 +1,5 @@
+using FakeItEasy;
+using PikeMQ.Core;
 using System;
 using Xunit;
 
@@ -80,5 +82,6 @@ namespace PikeMQ.Server.Test
         {
             Assert.False(true, "Implement");
         }
+
     }
 }
