@@ -1,3 +1,24 @@
+# Pike MQ
+Lightweight Message Qeueuing
+
+## Intro
+## Building Pike MQ
+The PikeMQ reference implementation are two .Net Core libraries.
+
+## Server Use
+
+## Client Use
+
+
+## Limitiations
+- The broker uses asynchronous calls everywhere, so most work is done using the threadpool. Under heavy load the threadpool might get exhausted resulting in slowly degrading performance, as frames need longer to get a thread assigned.
+- All subscriptions only last as long as the connections lasts.
+- Due to the parallel and asynchronous nature of the broker there is no guarantee as to the order in which messages arrive, that are sent with QoS 0. QoS 1 and QoS 2 are guaranteed to arrive in order, if the client waits for the result of the message to arrive.
+
+# Licence
+None yet.
+
+
 ## Welcome to GitHub Pages
 
 You can use the [editor on GitHub](https://github.com/rincewound/PikeMQ/edit/master/index.md) to maintain and preview the content for your website in Markdown files.
