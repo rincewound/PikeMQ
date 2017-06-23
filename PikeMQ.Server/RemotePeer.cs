@@ -57,11 +57,11 @@ namespace PikeMQ.Server
 
             if (qos == QoS.GuaranteedDelivery)
             {
-                var fail = waitQosEvent.WaitOne(3000);
+                var replyReceived = waitQosEvent.WaitOne(3000);
 
                 syncSendInProcess.ReleaseMutex();
-                return fail ? PostResult.DeliveryError
-                            : PostResult.Delivered;
+                return replyReceived ? PostResult.Delivered
+                                     : PostResult.DeliveryError;
 
             }
 

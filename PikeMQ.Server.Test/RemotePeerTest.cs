@@ -244,5 +244,38 @@ namespace PikeMQ.Server.Test
 
             A.CallTo(() => socket.Send(A<byte[]>.That.IsSameSequenceAs(expected))).MustHaveHappened();
         }
+
+        [Fact]
+        public void PostMessage_QosGuaranteedDelivery_Fails_If_No_Reply_Arrives()
+        {
+            FrameBuilder bld = new FrameBuilder();
+            bld.WriteByte(0x01);    // Reply Flag
+            bld.WriteArray(new byte[] { 0x01, 0x00, 0x00, 0x00 });
+            bld.WriteString("Fnord");
+            bld.WriteString("I am a payload");
+
+            var expected = bld.Build(FrameType.ChannelEvent);
+
+            var result = p.PostMessage("Fnord", Encoding.UTF8.GetBytes("I am a payload"), QoS.GuaranteedDelivery);
+            result.Wait();
+            Assert.Equal(PostResult.DeliveryError, result.Result);
+        }
+
+        [Fact]
+        public void PostMessage_QosGuaranteedDelivery_Waits_For_Ack_From_Client()
+        {
+            Assert.False(true, "Implement");
+            //FrameBuilder bld = new FrameBuilder();
+            //bld.WriteByte(0x01);    // Reply Flag
+            //bld.WriteArray(new byte[] { 0x01, 0x00, 0x00, 0x00 });
+            //bld.WriteString("Fnord");
+            //bld.WriteString("I am a payload");
+
+            //var expected = bld.Build(FrameType.ChannelEvent);
+
+
+            //var result = p.PostMessage("Fnord", Encoding.UTF8.GetBytes("I am a payload"), QoS.GuaranteedDelivery);
+            //result.Wait();
+        }
     }
 }
