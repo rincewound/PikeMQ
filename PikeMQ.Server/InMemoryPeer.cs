@@ -59,5 +59,10 @@ namespace PikeMQ.Core
         {
             //throw new NotImplementedException();
         }
+
+        public void AckFrame(int frameNo)
+        {
+            //throw new NotImplementedException();
+        }
     }
 }

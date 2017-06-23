@@ -55,8 +55,8 @@ namespace PikeMQ.Server
 
         private void HandleEventAck(Frame frame, IPeer source)
         {
-            var msgId = BitConverter.ToUInt32(frame.payload, 0);
-            throw new Exception("Implement and test me!");
+            var msgId = BitConverter.ToInt32(frame.payload, 0);
+            source.AckFrame(msgId);
         }
 
         private void HandlePublish(Frame frame, IPeer source)

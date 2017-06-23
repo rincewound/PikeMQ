@@ -17,6 +17,7 @@ namespace PikeMQ.Core
         void SendSubscribeReply(string channel, SubscribeStatus status);
         void SendConnectionReply(ConnectionAttemptStatus status);
         void SendUnsubReply(string channel);
-        void SendPublishReply(UInt32 messageId, PublishStatus status);        
+        void SendPublishReply(UInt32 messageId, PublishStatus status);
+        void AckFrame(int frameNo);
     }
 }

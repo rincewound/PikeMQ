@@ -67,6 +67,12 @@ namespace PikeMQ.Server
 
             return PostResult.Dispatched;
         }
+
+        public void AckFrame(int frameNo)
+        {
+            if (waitForPacketId == frameNo)
+                waitQosEvent.Set();
+        }
               
         private bool ProcessConnectionAttempt(Frame f)
         {
@@ -121,7 +127,10 @@ namespace PikeMQ.Server
             // Process frame, if we are connected.
             if (ConnectionState == PeerState.Connected ||
                f.frameType == FrameType.Disconnect)
+            {
                 frameReceive(f, this);
+            }
+                
         }
 
         public virtual void SendSubscribeReply(string channel, SubscribeStatus status)
