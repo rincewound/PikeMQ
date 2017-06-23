@@ -53,9 +53,9 @@ namespace PikeMQ.Server
             // one task finishes with a good result.
             tsk.Wait();
 
-            var good = tsk.Result.Any(x => x == PostResult.Dispatched);
+            var good = tsk.Result.Any(x => x == PostResult.Delivered);
 
-            return good ? PostResult.Dispatched
+            return good ? PostResult.Delivered
                         : PostResult.DeliveryError;            
         }
 

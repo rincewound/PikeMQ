@@ -1,0 +1,8 @@
+﻿################################################################################
+# Diese .gitignore-Datei wurde von Microsoft(R) Visual Studio automatisch erstellt.
+################################################################################
+
+/Doc
+/PikeMQ/bin/Debug/netcoreapp1.1
+/PikeMQ/obj
+/PikeMQ/obj/Debug/netcoreapp1.1

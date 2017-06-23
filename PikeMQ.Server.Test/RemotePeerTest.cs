@@ -204,7 +204,7 @@ namespace PikeMQ.Server.Test
         {
             FrameBuilder bld = new FrameBuilder();
             bld.WriteByte(0x00);    // No Flags!
-            bld.WriteArray(new byte[] { 0x00, 0x00, 0x00, 0x00 });
+            bld.WriteArray(new byte[] { 0x01, 0x00, 0x00, 0x00 });
             bld.WriteString("Fnord");
             bld.WriteString("I am a payload");
 
@@ -233,7 +233,7 @@ namespace PikeMQ.Server.Test
         {
             FrameBuilder bld = new FrameBuilder();
             bld.WriteByte(0x01);    // Reply Flag
-            bld.WriteArray(new byte[] { 0x00, 0x00, 0x00, 0x00 });
+            bld.WriteArray(new byte[] { 0x01, 0x00, 0x00, 0x00 });
             bld.WriteString("Fnord");
             bld.WriteString("I am a payload");
 

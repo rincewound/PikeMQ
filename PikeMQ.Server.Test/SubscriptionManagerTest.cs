@@ -78,9 +78,27 @@ namespace PikeMQ.Server.Test
         }
 
         [Fact]
-        public void DispatchMessage_QoSGuaranteedDispatch_SendsReply()
+        public void DispatchMessage_QoSGuaranteedDispatch_Results_Good_If_Dispatched()
         {
-            Assert.False(true, "Implement");
+            var result = manager.DispatchMessage("fnord", new byte[] { 0x01 }, Core.QoS.GuaranteedDispatch);
+
+            Assert.True(PostResult.Dispatched >= result);
+        }
+
+        [Fact]
+        public void DispatchMessage_QosGuaranteedDelivery_Results_Good_If_Delivered()
+        {
+            var result = manager.DispatchMessage("foo", new byte[] { 0x01 }, Core.QoS.GuaranteedDelivery);
+
+            Assert.Equal(PostResult.Delivered, result);
+        }
+
+        [Fact]
+        public void DispatchMessage_QosGuaranteedDelivery_Results_In_DeliveryError_If_No_Subscriptions_For_Message()
+        {
+            var result = manager.DispatchMessage("fnord", new byte[] { 0x01 }, Core.QoS.GuaranteedDelivery);
+
+            Assert.Equal(PostResult.DeliveryError, result);
         }
 
     }

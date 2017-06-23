@@ -92,9 +92,9 @@ namespace PikeMQ.Client
         {
         }
 
-        public void SendUnsubReply(string channel)
-        {
-            throw new NotImplementedException();
-        }
+       // public void SendUnsubReply(string channel)
+       // {
+        //    throw new NotImplementedException();
+       // }
     }
 }

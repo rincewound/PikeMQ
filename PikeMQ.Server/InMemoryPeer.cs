@@ -22,7 +22,7 @@ namespace PikeMQ.Core
 #pragma warning restore CS1998 // Bei der asynchronen Methode fehlen "await"-Operatoren. Die Methode wird synchron ausgeführt.
         {
             MessageReceived(topic, data);
-            return PostResult.Dispatched;
+            return PostResult.Delivered;
         }
 
         public void SetFrameReceivedCb(FrameReceived.FrameReceivedDelegate frd)
